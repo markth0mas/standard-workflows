@@ -4,6 +4,9 @@ on:
       image-artifact-name:
         required: true
         type: string
+      image-digest:
+        required: true
+        type: string
       ecr-repository:
         required: true
         type: string
@@ -42,7 +45,7 @@ jobs:
           ECR_REPOSITORY: ${{ inputs.ecr-repository }}
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker tag ${{ needs.build.outputs.image-digest }} $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker tag ${{ inputs.image-digest }} $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
       - name: Logout of Amazon ECR
