@@ -47,8 +47,9 @@ jobs:
       - name: Publish Docker image (tag)
         if: github.ref_type == 'tag'
         run: |
-          docker tag ${{ inputs.image-digest }} ${{ steps.login-ecr.outputs.registry }}/${{ inputs.ecr-repository }}:${{ github.ref_name }}
-          docker push ${{ steps.login-ecr.outputs.registry }}/${{ inputs.ecr-repository }}:${{ github.ref_name }}
+          VERSION=$(echo ${{ github.ref_name }} | sed -e 's/^v//')
+          docker tag ${{ inputs.image-digest }} ${{ steps.login-ecr.outputs.registry }}/${{ inputs.ecr-repository }}:$VERSION
+          docker push ${{ steps.login-ecr.outputs.registry }}/${{ inputs.ecr-repository }}:$VERSION
 
       - name: Logout of Amazon ECR
         run: docker logout ${{ steps.login-ecr.outputs.registry }}
