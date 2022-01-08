@@ -39,18 +39,16 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1.0.2
 
-      - name: Tag Docker image with SHA
+      - name: Publish Docker image (SHA)
         run: |
           docker tag ${{ inputs.image-digest }} ${{ steps.login-ecr.outputs.registry }}/${{ inputs.ecr-repository }}:${{ github.sha }}
+          docker push ${{ steps.login-ecr.outputs.registry }}/${{ inputs.ecr-repository }}:${{ github.sha }}
 
-      - name: Tag Docker image with tag name (tags only)
+      - name: Publish Docker image (tag)
         if: github.ref_type == 'tag'
         run: |
           docker tag ${{ inputs.image-digest }} ${{ steps.login-ecr.outputs.registry }}/${{ inputs.ecr-repository }}:${{ github.ref_name }}
-
-      - name: Publish Docker image
-        run: |
-          docker push --all-tags ${{ steps.login-ecr.outputs.registry }}/${{ inputs.ecr-repository }}:${{ github.sha }}
+          docker push ${{ steps.login-ecr.outputs.registry }}/${{ inputs.ecr-repository }}:${{ github.ref_name }}
 
       - name: Logout of Amazon ECR
         run: docker logout ${{ steps.login-ecr.outputs.registry }}
