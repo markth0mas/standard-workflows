@@ -25,7 +25,7 @@ jobs:
 
       - name: Fetch Dependencies
         env:
-          NODE_AUTH_TOKEN: ${{ inputs.registry-token }}
+          NODE_AUTH_TOKEN: ${{ secrets.registry-token }}
         working-directory: ${{ inputs.src }}
         shell: bash
         run: |
