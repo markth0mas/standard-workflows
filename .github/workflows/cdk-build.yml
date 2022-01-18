@@ -5,9 +5,9 @@ on:
         required: true
         type: string
         default: 'deploy'
+    secrets:
       registry-token:
         required: true
-        type: string
 jobs:
   build:
     runs-on: ubuntu-20.04
