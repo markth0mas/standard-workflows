@@ -60,7 +60,7 @@ jobs:
       - name: 'Deploying to ${{ inputs.deployment-env }}'
         run: |
           echo "stack - ${{ inputs.deploy-stack-name }}"
-          echo "environment - ${{ inputs.deployment-env }}
+          echo "environment - ${{ inputs.deployment-env }}"
           echo "cdk approval required - ${{ inputs.deploy-require-approval-for-iam-changes }}"
 
       - name: Configure AWS Credentials
