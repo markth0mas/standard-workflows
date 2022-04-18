@@ -1,0 +1,62 @@
+on:
+  workflow_call:
+    inputs:
+      src:
+        required: true
+        type: string
+        default: 'deploy'
+      aws-role-to-assume:
+        required: true
+        type: string
+        default: 'arn:aws:iam::258900779417:role/github-deployer'
+      aws-region:
+        required: true
+        type: string
+        default: 'eu-west-2'
+      aws-role-session-name:
+        required: true
+        type: string
+      deploy-stack-name:
+        required: true
+        type: string
+    secrets:
+      registry-token:
+        required: true
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    name: Build
+    steps:
+      - name: Checkout the project
+        uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          registry-url: 'https://npm.pkg.github.com'
+          cache: 'npm'
+          cache-dependency-path: ${{ inputs.src }}
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ inputs.aws-role-to-assume }}
+          role-session-name: ${{ inputs.aws-role-session-name }}
+          aws-region: ${{ inputs.aws-region }}
+
+      - name: Fetch Dependencies
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.registry-token }}
+        working-directory: ${{ inputs.src }}
+        shell: bash
+        run: |
+          npm ci --ignore-scripts
+          export NODE_AUTH_TOKEN="BOGUS"
+          npm rebuild
+          npm run prepare --if-present
+
+      - name: Deploy
+        working-directory: deploy
+        shell: bash
+        run: |
+          ./node_modules/.bin/cdk --app "npm run-script deploy" deploy ${{ inputs.deploy-stack-name }} --require-approval never --ci
