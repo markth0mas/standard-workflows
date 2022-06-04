@@ -5,6 +5,10 @@ on:
         required: true
         type: string
         default: 'deploy'
+      enabled:
+        required: true
+        type: boolean
+        default: true
     secrets:
       registry-token:
         required: true
@@ -12,6 +16,7 @@ jobs:
   build:
     runs-on: ubuntu-20.04
     name: CDK Build
+    if: ${{ inputs.enabled }}
     steps:
       - name: Checkout the project
         uses: actions/checkout@v2
