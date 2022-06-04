@@ -11,7 +11,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-20.04
-    name: Build
+    name: CDK Build
     steps:
       - name: Checkout the project
         uses: actions/checkout@v2
